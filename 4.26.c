@@ -30,9 +30,9 @@ void ShowTheWorld(int gridsize)
 
 void cell() //pdf内测试程序的细胞
 {
-    grid[2][3] = 1;
     grid[3][3] = 1;
     grid[4][3] = 1;
+    grid[2][3] = 1;
     grid[3][1] = 1;
     grid[4][2] = 1;
 }
@@ -88,9 +88,9 @@ int NumAround(int i, int j)
 
 void Operate(int gridsize)
 {
-    for (int i = 1; i < gridsize; i++)
+    for (int i = 1; i < gridsize + 1; i++)
     {
-        for (int j = 1; j < gridsize; j++)
+        for (int j = 1; j < gridsize + 1; j++)
         {
             if (grid[i][j] == 1) //活细胞
             {
@@ -107,16 +107,13 @@ void Operate(int gridsize)
                     grid[i][j] = 0; //超过3个 死
                 }
             }
-            else //死细胞
+            else if (grid[i][j] == 0 && NumAround(i, j) == 3) //死细胞
             {
-                if (NumAround(i, j) == 3)
-                {
-                    grid[i][j] = 1;
-                }
-                else
-                {
-                    grid[i][j] = 0;
-                }
+                grid[i][j] = 1;
+            }
+            else
+            {
+                grid[i][j] = 0;
             }
         }
     }
@@ -124,23 +121,47 @@ void Operate(int gridsize)
 
 int main()
 {
-    CreateWorld(5);
-    cell();
+    char a;
+    int gridsize = 5;
+    
+    printf("read or not");
+    scanf("%c", &a);
+    if (a == 'y')
+    {
+    FILE *fo=fopen("game.bin","rb");
+    for (int i = 1; i < gridsize + 1; i++)
+    {
+        for (int j = 1; j < gridsize + 1; j++)
+        {
+            fread(&grid[i][j], sizeof(int), 1, fo);
+            printf("%i", grid[i][j]);
+        }
+        printf("\n");
+    }
+    fclose(fo);
+    }
+    else
+    {
+        CreateWorld(gridsize);
+        cell();
 
-    ShowTheWorld(5);
-    printf("\n");
+        ShowTheWorld(gridsize);
+        printf("\n");
+        for (int i = 0; i < 9; i++)
+        {
+            Operate(gridsize);
+            ShowTheWorld(gridsize);
+            printf("\n");
+        }
+    }
+    FILE *fp=fopen("game.bin","wb");
+    for (int i = 1; i < gridsize + 1; i++)
+    {
+        for (int j = 1; j < gridsize + 1; j++)
+        {
+            fwrite(&grid[i][j], sizeof(int), 1, fp);
+        }
+    }
+    fclose(fp);
 
-    Operate(5);
-    ShowTheWorld(5);
-    printf("\n");
-
-    Operate(5);
-    ShowTheWorld(5);
-    printf("\n");
-    printf("%ia%ib%i", NumAround(5, 3), grid[5][3], grid1[5][3]);
-
-    Operate(5);
-    ShowTheWorld(5);
-    printf("\n");
-    printf("%ia%ib%i", NumAround(5, 3), grid[5][3], grid1[5][3]);
 }
