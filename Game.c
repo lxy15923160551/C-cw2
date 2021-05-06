@@ -27,10 +27,10 @@ void ShowTheWorld(int length, int width, SDL_Window *win, int Slength, int Swidt
     SDL_Renderer *renderer;
     renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
 
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); //白色
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); //white
     SDL_RenderClear(renderer);
 
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); //紅色
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); //red
     for (int i = 1; i < width + 1; i++)
     {
         for (int j = 1; j < length + 1; j++)
@@ -50,7 +50,7 @@ void ShowTheWorld(int length, int width, SDL_Window *win, int Slength, int Swidt
         b += size;
     }
 
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); //黑色
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); //black
     for (int i = 0; i < length; i++)
     {
         SDL_RenderDrawLine(renderer, SIZE, 0, SIZE, Swidth);
@@ -187,22 +187,22 @@ void Operate(int length, int width)
     {
         for (int j = 1; j < length + 1; j++)
         {
-            if (grid[i][j] == 1) //��ϸ��
+            if (grid[i][j] == 1)
             {
                 if (NumAround(i, j) == 0 || NumAround(i, j) == 1)
                 {
-                    grid[i][j] = 0; //0��1�� ��
+                    grid[i][j] = 0; 
                 }
                 else if (NumAround(i, j) == 2 || NumAround(i, j) == 3)
                 {
-                    grid[i][j] = 1; //2��3�� ��
+                    grid[i][j] = 1; 
                 }
                 else
                 {
-                    grid[i][j] = 0; //����3�� ��
+                    grid[i][j] = 0;
                 }
             }
-            else if (grid[i][j] == 0 && NumAround(i, j) == 3) //��ϸ��
+            else if (grid[i][j] == 0 && NumAround(i, j) == 3) 
             {
                 grid[i][j] = 1;
             }
@@ -214,7 +214,7 @@ void Operate(int length, int width)
     }
 }
 
-void eventloop() //事件循环
+void eventloop() 
 {
     while (1)
     {
@@ -241,7 +241,7 @@ int CheckState(int length, int width, int size)
     {
         switch (event.type)
         {
-        case SDL_MOUSEBUTTONDOWN: //点击鼠标左键
+        case SDL_MOUSEBUTTONDOWN: //Click the left mouse button
             x = event.motion.x;
             y = event.motion.y;
             for (int i = 1; i < width + 1; i++)
@@ -265,7 +265,23 @@ int CheckState(int length, int width, int size)
                 i2 += size;
             }
         case SDL_QUIT:
-            return 1; // 退回主菜單
+            return 1; // Return to Main Menu
         }
     }
 }
+
+int checkstop(int length, int width)
+{
+    for (int i = 1; i < width + 1; i++)
+    {
+        for (int j = 1; j < length + 1; j++)
+        {
+            if (grid1[i][j] != grid[i][j])
+            {
+                return 0; //different
+            }
+        }
+    }
+    return 1; //same
+}
+
