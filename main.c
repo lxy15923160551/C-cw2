@@ -11,12 +11,12 @@ int main(int argc, char *argv[])
 {
     char a;
     char b;
-    //輸入的長寬
+    //The length and width of the input
     int length;
     int width;
-    //方格大小
+    //Grid size
     int size;
-    //屏幕大小
+    //screen size
     int Slength;
     int Swidth;
 
@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
         scanf("%s", &a);
     }
 
-    if (a == 'y') //��ȡ��������
+    if (a == 'y') 
     {
         FILE *fo = fopen("game.bin", "rb");
         fread(&length, sizeof(int), 1, fo);
@@ -47,33 +47,32 @@ int main(int argc, char *argv[])
             }
         }
         fclose(fo);
-        if (SDL_Init(SDL_INIT_VIDEO)) //错误判断
+        if (SDL_Init(SDL_INIT_VIDEO)) //misjudgement
         {
             SDL_Log("Can not init video,%s", SDL_GetError());
             return 1;
         }
         SDL_Window *win = SDL_CreateWindow("The game of life", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, Slength, Swidth, SDL_WINDOW_SHOWN);
-        if (win == NULL) //错误判断
+        if (win == NULL) //misjudgement
         {
             SDL_Log("Can not create window,%s", SDL_GetError());
             return 1;
         }
-
         while (1)
         {
-            show(length, width, win, Slength, Swidth, size, delay);
-            Operate(length, width);
-
-            SDL_Event event;
-            if (SDL_PollEvent(&event))
+            if (checkstop(length, width) == 0)
             {
-                if (event.type == SDL_QUIT)
-                {
-                    break;
-                }
+                show(length, width, win, Slength, Swidth, size, delay);
+                Operate(length, width);
+            }
+            else if (checkstop(length, width) == 1)
+            {
+                goto aaaa;
             }
         }
-        SDL_DestroyWindow(win); //退出窗口
+    aaaa:
+        eventloop();
+        SDL_DestroyWindow(win); //Out of the window
     }
     else
     {
@@ -98,7 +97,7 @@ int main(int argc, char *argv[])
             printf("Please enter the number which should be more than 0 and less than 10.");
             scanf("%i", &delay);
         }
-        //判斷方格、屏幕大小
+        //Determine the square and screen size
         if (length >= width)
         {
             if (length > 0 && length <= 10)
@@ -130,13 +129,13 @@ int main(int argc, char *argv[])
             }
         }
 
-        if (SDL_Init(SDL_INIT_VIDEO)) //错误判断
+        if (SDL_Init(SDL_INIT_VIDEO)) //misjudgement 
         {
             SDL_Log("Can not init video,%s", SDL_GetError());
             return 1;
         }
         SDL_Window *win = SDL_CreateWindow("Initialization", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, Slength, Swidth, SDL_WINDOW_SHOWN);
-        if (win == NULL) //错误判断
+        if (win == NULL) //misjudgement 
         {
             SDL_Log("Can not create window,%s", SDL_GetError());
             return 1;
@@ -145,7 +144,7 @@ int main(int argc, char *argv[])
         printf("1.Click on the blank to resurrect cells\n");
         printf("2.Close the window to end initialization\n");
         printf("3.Click on the resurrected cell to make it die\n");
-        //初始化細胞
+        //initialization
         CreateWorld(length, width);
         ShowTheWorld(length, width, win, Slength, Swidth, size);
         while (1)
@@ -160,7 +159,7 @@ int main(int argc, char *argv[])
             {
                 switch (event.type)
                 {
-                case SDL_MOUSEBUTTONDOWN: //点击鼠标左键
+                case SDL_MOUSEBUTTONDOWN: //Click the left mouse button
                     x = event.motion.x;
                     y = event.motion.y;
                     for (int i = 1; i < width + 1; i++)
@@ -191,14 +190,14 @@ int main(int argc, char *argv[])
                         i2 += size;
                     }
                 case SDL_QUIT:
-                    goto aaa; // 退回主菜單
+                    goto aaa; // Return to Main Menu
                 }
             }
         bbb:
             show1(length, width, win, Slength, Swidth, size);
         }
     aaa:
-        SDL_DestroyWindow(win); //退出窗口
+        SDL_DestroyWindow(win); //Out of the window
 
         printf("Whether to start the game(y/n)");
         scanf("%s", &b);
@@ -209,33 +208,32 @@ int main(int argc, char *argv[])
         }
         if (b == 'y')
         {
-
-            //再次啓動窗口
             SDL_Window *win1 = SDL_CreateWindow("The game of life", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, Slength, Swidth, SDL_WINDOW_SHOWN);
-            if (win1 == NULL) //错误判断
+            if (win1 == NULL) //misjudgement
             {
                 SDL_Log("Can not create window,%s", SDL_GetError());
                 return 1;
             }
-            //運行邏輯
+            
+            //Logic
+
+            show(length, width, win1, Slength, Swidth, size, delay);
+            Operate(length, width);
             while (1)
             {
-                SDL_Event event;
-                while (SDL_PollEvent(&event))
+                if (checkstop(length, width) == 0)
                 {
-                    switch (event.type)
-                    {
-                    case SDL_QUIT:
-                        goto aa;
-
-                    default:
-                        show(length, width, win1, Slength, Swidth, size, delay);
-                        Operate(length, width);
-                    }
+                    show(length, width, win1, Slength, Swidth, size, delay);
+                    Operate(length, width);
+                }
+                else if (checkstop(length, width) == 1)
+                {
+                    goto aa;
                 }
             }
         aa:
-            SDL_DestroyWindow(win1); //退出窗口
+            eventloop();
+            SDL_DestroyWindow(win1); //Out of the window
         }
     }
 
